@@ -52,8 +52,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             leaderboardBody.innerHTML = '';
             sortedData.forEach((student, index) => {
                 const row = document.createElement('tr');
-                row.classList.add('border-b', 'border-gray-700');
+                row.classList.add('border-b', 'border-gray-700',"student-row");
                 row.innerHTML = `
+                    <td class = "border"><button> top </button></td>
                     <td class="p-4">${index + 1}</td>
                     <td class="p-4">${student.roll}</td>
                     <td class="p-4">
@@ -67,6 +68,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <td class="p-4 text-yellow-400">${student.mediumSolved || 'N/A'}</td>
                     <td class="p-4 text-red-400">${student.hardSolved || 'N/A'}</td>
                 `;
+                row.setAttribute('id',student.roll);
+                row.addEventListener('click',()=>handleSetLeaderboard(student));
                 leaderboardBody.appendChild(row);
             });
         };
@@ -103,6 +106,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Initialize the page
         populateSectionFilter();
         renderLeaderboard(data);
+        function handleSetLeaderboard(student){
+            renderLeaderboard([student,...(data.filter((stud)=>{
+                return student['roll']!=stud['roll'];
+            }))]);
+        }
 
         // Event Listeners
         sectionFilter.addEventListener('change', (e) => {
@@ -142,7 +150,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             const sortedData = sortData(filteredData, 'hardSolved', hardSolvedDirection, true);
             renderLeaderboard(sortedData);
         });
-
     } catch (error) {
         console.error('Error fetching data:', error);
     }
